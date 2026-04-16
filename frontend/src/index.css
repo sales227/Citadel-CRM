@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Brand colour tokens (single-hue blue palette) ── */
+:root {
+  --color-primary:   #1565C0;
+  --color-secondary: #2563EB;
+  --color-brand-50:  #EFF6FF;
+  --color-brand-100: #DBEAFE;
+  --color-brand-200: #BFDBFE;
+  --color-brand-700: #1D4ED8;
+  --color-brand-900: #1E3A8A;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Minimum tap-target for touch devices */
+  button, input, select, textarea {
+    @apply min-h-[44px];
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep scroll functionality */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
