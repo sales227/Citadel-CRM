@@ -391,47 +391,55 @@ export default function OrdersPage() {
                             )}
 
                             <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-sm font-bold text-gray-700">Products *</label>
-                                    <button type="button" onClick={() => setCreateItems(it => [...it, emptyItem()])} className="text-xs text-primary font-bold hover:underline flex items-center gap-1">
-                                        <PlusCircle size={14} /> Add Product
-                                    </button>
-                                </div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Products *</label>
+                                <p className="text-xs text-gray-500 mb-3">You can add one or more products to this order.</p>
                                 {createErrors.items && <p className="text-xs text-red-500 mb-2">{createErrors.items}</p>}
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     {createItems.map((item, idx) => (
-                                        <div key={idx} className="flex gap-2 items-center">
-                                            <select
-                                                value={item.product}
-                                                onChange={e => updateCreateItem(idx, 'product', e.target.value)}
-                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary"
-                                            >
-                                                <option value="">Select product...</option>
-                                                {PRODUCTS.map(p => <option key={p} value={p}>{p}</option>)}
-                                            </select>
-                                            <input
-                                                type="number"
-                                                value={item.quantity}
-                                                onChange={e => updateCreateItem(idx, 'quantity', e.target.value)}
-                                                placeholder="Qty"
-                                                min="1"
-                                                className="w-20 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary"
-                                            />
-                                            <select
-                                                value={item.unit}
-                                                onChange={e => updateCreateItem(idx, 'unit', e.target.value)}
-                                                className="w-28 px-2 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 focus:ring-primary focus:border-primary"
-                                            >
-                                                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                                            </select>
+                                        <div key={idx} className="flex gap-2 items-end p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                            <div className="flex-1 min-w-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Product *</label>
+                                                <select
+                                                    value={item.product}
+                                                    onChange={e => updateCreateItem(idx, 'product', e.target.value)}
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary bg-white"
+                                                >
+                                                    <option value="">Select product...</option>
+                                                    {PRODUCTS.map(p => <option key={p} value={p}>{p}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="w-20 shrink-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Qty *</label>
+                                                <input
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={e => updateCreateItem(idx, 'quantity', e.target.value)}
+                                                    placeholder="0"
+                                                    min="1"
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary"
+                                                />
+                                            </div>
+                                            <div className="w-24 shrink-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Unit</label>
+                                                <select
+                                                    value={item.unit}
+                                                    onChange={e => updateCreateItem(idx, 'unit', e.target.value)}
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm bg-gray-50 focus:ring-primary focus:border-primary"
+                                                >
+                                                    {UNITS.map(u => <option key={u} value={u}>{u === 'Cubic Meters' ? 'm³' : u}</option>)}
+                                                </select>
+                                            </div>
                                             {createItems.length > 1 && (
-                                                <button type="button" onClick={() => setCreateItems(it => it.filter((_, i) => i !== idx))} className="p-1.5 text-red-400 hover:text-red-600">
-                                                    <MinusCircle size={18} />
+                                                <button type="button" onClick={() => setCreateItems(it => it.filter((_, i) => i !== idx))} className="mb-0.5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors shrink-0" title="Remove">
+                                                    <X size={16} />
                                                 </button>
                                             )}
                                         </div>
                                     ))}
                                 </div>
+                                <button type="button" onClick={() => setCreateItems(it => [...it, emptyItem()])} className="mt-3 text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">
+                                    <PlusCircle size={16} /> Add another product
+                                </button>
                             </div>
 
                             <div>
@@ -467,46 +475,54 @@ export default function OrdersPage() {
                         </div>
                         <div className="p-6 space-y-5">
                             <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-sm font-bold text-gray-700">Products</label>
-                                    <button type="button" onClick={() => setEditItems(it => [...it, emptyItem()])} className="text-xs text-primary font-bold hover:underline flex items-center gap-1">
-                                        <PlusCircle size={14} /> Add Product
-                                    </button>
-                                </div>
-                                <div className="space-y-2">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Products</label>
+                                <p className="text-xs text-gray-500 mb-3">You can update or add multiple products to this order.</p>
+                                <div className="space-y-3">
                                     {editItems.map((item, idx) => (
-                                        <div key={idx} className="flex gap-2 items-center">
-                                            <select
-                                                value={item.product}
-                                                onChange={e => updateEditItem(idx, 'product', e.target.value)}
-                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary"
-                                            >
-                                                <option value="">Select product...</option>
-                                                {PRODUCTS.map(p => <option key={p} value={p}>{p}</option>)}
-                                            </select>
-                                            <input
-                                                type="number"
-                                                value={item.quantity}
-                                                onChange={e => updateEditItem(idx, 'quantity', e.target.value)}
-                                                placeholder="Qty"
-                                                min="1"
-                                                className="w-20 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary"
-                                            />
-                                            <select
-                                                value={item.unit}
-                                                onChange={e => updateEditItem(idx, 'unit', e.target.value)}
-                                                className="w-28 px-2 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 focus:ring-primary focus:border-primary"
-                                            >
-                                                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                                            </select>
+                                        <div key={idx} className="flex gap-2 items-end p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                            <div className="flex-1 min-w-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Product *</label>
+                                                <select
+                                                    value={item.product}
+                                                    onChange={e => updateEditItem(idx, 'product', e.target.value)}
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary bg-white"
+                                                >
+                                                    <option value="">Select product...</option>
+                                                    {PRODUCTS.map(p => <option key={p} value={p}>{p}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="w-20 shrink-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Qty *</label>
+                                                <input
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={e => updateEditItem(idx, 'quantity', e.target.value)}
+                                                    placeholder="0"
+                                                    min="1"
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary"
+                                                />
+                                            </div>
+                                            <div className="w-24 shrink-0">
+                                                <label className="block text-xs font-bold text-gray-600 mb-1">Unit</label>
+                                                <select
+                                                    value={item.unit}
+                                                    onChange={e => updateEditItem(idx, 'unit', e.target.value)}
+                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm bg-gray-50 focus:ring-primary focus:border-primary"
+                                                >
+                                                    {UNITS.map(u => <option key={u} value={u}>{u === 'Cubic Meters' ? 'm³' : u}</option>)}
+                                                </select>
+                                            </div>
                                             {editItems.length > 1 && (
-                                                <button type="button" onClick={() => setEditItems(it => it.filter((_, i) => i !== idx))} className="p-1.5 text-red-400 hover:text-red-600">
-                                                    <MinusCircle size={18} />
+                                                <button type="button" onClick={() => setEditItems(it => it.filter((_, i) => i !== idx))} className="mb-0.5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors shrink-0" title="Remove">
+                                                    <X size={16} />
                                                 </button>
                                             )}
                                         </div>
                                     ))}
                                 </div>
+                                <button type="button" onClick={() => setEditItems(it => [...it, emptyItem()])} className="mt-3 text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">
+                                    <PlusCircle size={16} /> Add another product
+                                </button>
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Dispatch Schedule Date</label>
