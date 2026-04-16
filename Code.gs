@@ -57,15 +57,19 @@ function handleRequest(e, method) {
       case 'createQuotation': result = handleCreateQuotation(params); break;
       case 'updateQuotation': result = handleUpdateQuotation(params); break;
       case 'approveQuotation': result = handleApproveQuotation(params); break;
+      case 'deleteQuotations': result = handleDeleteQuotations(params); break;
 
       case 'getOrders': result = handleGetOrders(params); break;
       case 'createOrder': result = handleCreateOrder(params); break;
       case 'updateOrderStatus': result = handleUpdateOrderStatus(params); break;
+      case 'updateOrder': result = handleUpdateOrder(params); break;
+      case 'deleteOrders': result = handleDeleteOrders(params); break;
 
       case 'getPayments': result = handleGetPayments(params); break;
       case 'createPayment': result = handleCreatePayment(params); break;
       case 'updatePayment': result = handleUpdatePayment(params); break;
       case 'approveCredit': result = handleApproveCredit(params); break;
+      case 'deletePayments': result = handleDeletePayments(params); break;
 
       case 'getReminders': result = handleGetReminders(params); break;
       case 'updateReminderStatus': result = handleUpdateReminderStatus(params); break;
@@ -611,6 +615,14 @@ function handleUpdateOrderStatus(p) {
   return { success: true };
 }
 
+function handleUpdateOrder(p) {
+  if (!p.OrderID) return { success: false, message: 'OrderID is required' };
+  if (p.updates) p.updates.UpdatedAt = new Date().toISOString();
+  updateRow('ORDERS', 'OrderID', p.OrderID, p.updates || {});
+  if (p.logUserID) logActivity(p.logUserID, "UPDATE", "ORDER", p.OrderID, JSON.stringify(p.updates));
+  return { success: true };
+}
+
 // --- DELETE ORDER(S) ---
 function handleDeleteOrders(p) {
   if (!p.OrderIDs || !Array.isArray(p.OrderIDs) || p.OrderIDs.length === 0) {
@@ -689,6 +701,15 @@ function handleApproveCredit(p) {
     UpdatedAt: new Date().toISOString()
   });
   return { success: true };
+}
+
+function handleDeletePayments(p) {
+  if (!p.PaymentIDs || !Array.isArray(p.PaymentIDs) || p.PaymentIDs.length === 0) {
+    return { success: false, message: 'PaymentIDs array is required' };
+  }
+  var count = deleteRows('PAYMENTS', 'PaymentID', p.PaymentIDs);
+  if (p.logUserID) logActivity(p.logUserID, "DELETE", "PAYMENTS", p.PaymentIDs.join(','), count + ' payments deleted');
+  return { success: true, message: count + ' payment(s) deleted', count: count };
 }
 
 // --- REMINDERS ---
