@@ -188,14 +188,14 @@ export default function DashboardPage() {
     };
 
     const COLORS = {
-        source: ['#1565C0', '#1D4ED8', '#2563EB', '#3B82F6', '#60A5FA'],
+        source: ['#0EA5E9', '#8B5CF6', '#F59E0B', '#10B981', '#EF4444'],
         status: {
-            'New':         '#9E9E9E',
-            'Contacted':   '#BFDBFE',
-            'Quoted':      '#93C5FD',
-            'Negotiating': '#3B82F6',
-            'Won':         '#1565C0',
-            'Lost':        '#6B7280'
+            'New':         '#9CA3AF',
+            'Contacted':   '#0EA5E9',
+            'Quoted':      '#8B5CF6',
+            'Negotiating': '#F59E0B',
+            'Won':         '#10B981',
+            'Lost':        '#EF4444'
         }
     };
 
@@ -284,39 +284,39 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {isAdmin && (
                     <>
-                        <KPICard title="New Leads Today"   value={stats?.newLeadsToday || 0}  icon={UserPlus}    colorClass="text-blue-600"   bgClass="bg-blue-50"    to="/leads?dateFilter=today" />
-                        <KPICard title="Total Active Leads" value={stats?.totalLeads || 0}     icon={Users}       colorClass="text-blue-600"   bgClass="bg-blue-50"    to="/leads" />
-                        <KPICard title="Pending Approvals" value={pendingQuotations.length + pendingPaymentsApproval.length} icon={FileText} colorClass="text-indigo-600" bgClass="bg-indigo-50" to="/leads?status=Quoted" />
-                        <KPICard title="Orders Confirmed"  value={stats?.ordersConfirmed || 0} icon={ShoppingCart} colorClass="text-brand-700" bgClass="bg-brand-100"  to="/orders" />
-                        <KPICard title="Pending Payments"  value={stats?.pendingPayments || 0} icon={Clock}       colorClass="text-primary"    bgClass="bg-brand-50"   to="/payments?status=Pending" />
-                        <KPICard title="Overdue Payments"  value={stats?.overduePayments || 0} icon={AlertCircle} colorClass="text-red-600"    bgClass="bg-red-50"     to="/payments?overdue=true" />
+                        <KPICard title="New Leads Today"   value={stats?.newLeadsToday || 0}  icon={UserPlus}    colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads?dateFilter=today" />
+                        <KPICard title="Total Active Leads" value={stats?.totalLeads || 0}    icon={Users}       colorClass="text-sky-600"    bgClass="bg-sky-50"    to="/leads" />
+                        <KPICard title="Pending Approvals" value={pendingQuotations.length + pendingPaymentsApproval.length} icon={FileText} colorClass="text-amber-600" bgClass="bg-amber-50" to="/leads?status=Quoted" />
+                        <KPICard title="Orders Confirmed"  value={stats?.ordersConfirmed || 0} icon={ShoppingCart} colorClass="text-green-600" bgClass="bg-green-50" to="/orders" />
+                        <KPICard title="Pending Payments"  value={stats?.pendingPayments || 0} icon={Clock}       colorClass="text-amber-600"  bgClass="bg-amber-50"  to="/payments?status=Pending" />
+                        <KPICard title="Overdue Payments"  value={stats?.overduePayments || 0} icon={AlertCircle} colorClass="text-red-600"   bgClass="bg-red-50"    to="/payments?overdue=true" />
                     </>
                 )}
                 {isManager && (
                     <>
-                        <KPICard title="Team Leads"         value={leads.length}    icon={Users}       colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads" />
-                        <KPICard title="Team Customers"     value={customers.length} icon={Building2}  colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/customers" />
-                        <KPICard title="Pending Quotations" value={quotations.filter(q => q['ApprovalStatus (NotRequired/PendingApproval/Approved/Rejected)'] === 'PendingApproval').length} icon={FileText} colorClass="text-indigo-600" bgClass="bg-indigo-50" to="/leads?status=Quoted" />
-                        <KPICard title="Total Orders"       value={orders.length}   icon={ShoppingCart} colorClass="text-brand-700" bgClass="bg-brand-100" to="/orders" />
-                        <KPICard title="Follow-ups Pending" value={followUps.length} icon={MessageSquare} colorClass="text-primary" bgClass="bg-brand-50"  to="/reminders" />
-                        <KPICard title="Team Performance"   value={leads.length > 0 ? Math.round((orders.length / leads.length) * 100) + '%' : '0%'} icon={CheckCircle} colorClass="text-red-600" bgClass="bg-red-50" />
+                        <KPICard title="Team Leads"         value={leads.length}    icon={Users}         colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads" />
+                        <KPICard title="Team Customers"     value={customers.length} icon={Building2}    colorClass="text-sky-600"    bgClass="bg-sky-50"    to="/customers" />
+                        <KPICard title="Pending Quotations" value={quotations.filter(q => q['ApprovalStatus (NotRequired/PendingApproval/Approved/Rejected)'] === 'PendingApproval').length} icon={FileText} colorClass="text-amber-600" bgClass="bg-amber-50" to="/leads?status=Quoted" />
+                        <KPICard title="Total Orders"       value={orders.length}   icon={ShoppingCart}  colorClass="text-green-600"  bgClass="bg-green-50"  to="/orders" />
+                        <KPICard title="Follow-ups Pending" value={followUps.length} icon={MessageSquare} colorClass="text-violet-600" bgClass="bg-violet-50" to="/reminders" />
+                        <KPICard title="Team Performance"   value={leads.length > 0 ? Math.round((orders.length / leads.length) * 100) + '%' : '0%'} icon={CheckCircle} colorClass="text-indigo-600" bgClass="bg-indigo-50" />
                     </>
                 )}
                 {isStaff && (
                     <>
-                        <KPICard title="My Leads"           value={leads.length}     icon={UserPlus}    colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads" />
-                        <KPICard title="My Customers"       value={customers.length} icon={Users}       colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/customers" />
-                        <KPICard title="Pending Follow-ups" value={followUps.length} icon={MessageSquare} colorClass="text-indigo-600" bgClass="bg-indigo-50" to="/reminders" />
-                        <KPICard title="Total Quotations"   value={quotations.length} icon={FileText}   colorClass="text-brand-700" bgClass="bg-brand-100"  to="/leads" />
-                        <KPICard title="This Month Orders"  value={orders.length}    icon={ShoppingCart} colorClass="text-primary"   bgClass="bg-brand-50"  to="/orders" />
-                        <KPICard title="Pending Approvals"  value={pendingQuotations.length} icon={Clock} colorClass="text-red-600" bgClass="bg-red-50"     to="/leads?status=Quoted" />
+                        <KPICard title="My Leads"           value={leads.length}     icon={UserPlus}      colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads" />
+                        <KPICard title="My Customers"       value={customers.length} icon={Users}         colorClass="text-sky-600"    bgClass="bg-sky-50"    to="/customers" />
+                        <KPICard title="Pending Follow-ups" value={followUps.length} icon={MessageSquare} colorClass="text-violet-600" bgClass="bg-violet-50" to="/reminders" />
+                        <KPICard title="Total Quotations"   value={quotations.length} icon={FileText}     colorClass="text-amber-600"  bgClass="bg-amber-50"  to="/leads" />
+                        <KPICard title="This Month Orders"  value={orders.length}    icon={ShoppingCart}  colorClass="text-green-600"  bgClass="bg-green-50"  to="/orders" />
+                        <KPICard title="Pending Approvals"  value={pendingQuotations.length} icon={Clock} colorClass="text-red-600"   bgClass="bg-red-50"    to="/leads?status=Quoted" />
                     </>
                 )}
                 {isUser && (
                     <>
-                        <KPICard title="My Leads"   value={leads.length}      icon={UserPlus}    colorClass="text-blue-600"   bgClass="bg-blue-50"   to="/leads" />
-                        <KPICard title="Quotations" value={quotations.length} icon={FileText}    colorClass="text-indigo-600" bgClass="bg-indigo-50" to="/leads" />
-                        <KPICard title="Orders"     value={orders.length}     icon={ShoppingCart} colorClass="text-brand-700" bgClass="bg-brand-100" to="/orders" />
+                        <KPICard title="My Leads"   value={leads.length}      icon={UserPlus}     colorClass="text-blue-600"  bgClass="bg-blue-50"   to="/leads" />
+                        <KPICard title="Quotations" value={quotations.length} icon={FileText}     colorClass="text-amber-600" bgClass="bg-amber-50"  to="/leads" />
+                        <KPICard title="Orders"     value={orders.length}     icon={ShoppingCart} colorClass="text-green-600" bgClass="bg-green-50"  to="/orders" />
                     </>
                 )}
             </div>
@@ -469,22 +469,22 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     {/* Quotations Pending */}
-                    <div className="bg-white rounded-xl shadow-sm border border-brand-200 overflow-hidden">
-                        <div className="bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center gap-2">
-                            <AlertCircle size={20} className="text-primary" />
-                            <h3 className="text-lg font-bold text-primary">Quotations Pending Approval</h3>
+                    <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden">
+                        <div className="bg-amber-50 px-6 py-4 border-b border-amber-100 flex items-center gap-2">
+                            <AlertCircle size={20} className="text-amber-600" />
+                            <h3 className="text-lg font-bold text-amber-700">Quotations Pending Approval</h3>
                         </div>
                         <div className="divide-y divide-gray-100">
                             {pendingQuotations.length > 0 ? (
                                 pendingQuotations.map(q => (
-                                    <div key={q.id} className="p-4 md:p-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:bg-brand-50/30">
+                                    <div key={q.id} className="p-4 md:p-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:bg-amber-50/40">
                                         <div>
                                             <h4 className="font-bold text-gray-900">{q.customerName}</h4>
                                             <p className="text-sm text-gray-600">{q.product}</p>
                                             <p className="text-sm font-medium mt-1 text-gray-800">₹{q.price} / {q.unit}</p>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button onClick={() => handleApproveQuotation(q.id)} className="flex items-center gap-1 bg-brand-50 text-primary px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-brand-100 transition-colors">
+                                            <button onClick={() => handleApproveQuotation(q.id)} className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-100 transition-colors">
                                                 <CheckCircle size={16} /> Approve
                                             </button>
                                         </div>

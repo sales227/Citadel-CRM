@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getCustomers, getLeads, getUsers, createCustomer, deleteCustomers } from '../api/apiService';
+import { getCustomers, getLeads, getUsers, createCustomer, updateCustomer, deleteCustomers } from '../api/apiService';
 import { getVisibleCustomers } from '../utils/permissions';
 import { useSyncData } from '../hooks/useSyncData';
-import { Search, Plus, Building2, Phone, Mail, MapPin, Eye, FileText, CheckCircle2, X, Upload, RefreshCw, Trash2, AlertCircle } from 'lucide-react';
+import { Search, Plus, Building2, Phone, Mail, MapPin, Eye, FileText, CheckCircle2, X, Upload, RefreshCw, Trash2, AlertCircle, Pencil } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 export default function CustomersPage() {
@@ -30,6 +30,13 @@ export default function CustomersPage() {
     const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleting, setDeleting] = useState(false);
+
+    // Edit modal state
+    const [editingCustomer, setEditingCustomer] = useState(null);
+    const [editForm, setEditForm] = useState({ CustomerName: '', Phone: '', Email: '', CompanyName: '', City: '', GSTNumber: '' });
+    const [editErrors, setEditErrors] = useState({});
+    const [editSubmitting, setEditSubmitting] = useState(false);
+    const [duplicatePhoneWarning, setDuplicatePhoneWarning] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -119,6 +126,47 @@ export default function CustomersPage() {
         }
     };
 
+    // ─── Edit Customer ────────────────────────────────────────────────────────────
+    const openEditCustomer = (cust) => {
+        setEditForm({
+            CustomerName: cust.CustomerName || '',
+            Phone: String(cust.Phone || ''),
+            Email: cust.Email || '',
+            CompanyName: cust.CompanyName || '',
+            City: cust.City || '',
+            GSTNumber: cust.GSTNumber || ''
+        });
+        setEditErrors({});
+        setDuplicatePhoneWarning('');
+        setEditingCustomer(cust);
+    };
+
+    const checkEditPhoneDuplicate = (phone, currentID) => {
+        if (!phone || phone.length < 10) { setDuplicatePhoneWarning(''); return; }
+        const match = customers.find(c => c.CustomerID !== currentID && String(c.Phone || '').includes(phone));
+        setDuplicatePhoneWarning(match ? `Warning: ${match.CustomerName} already has this phone number.` : '');
+    };
+
+    const handleUpdateCustomer = async (e) => {
+        e.preventDefault();
+        const errs = {};
+        if (!editForm.CustomerName.trim()) errs.CustomerName = 'Required';
+        if (!editForm.Phone.trim() || editForm.Phone.length < 10) errs.Phone = 'Valid phone required';
+        if (Object.keys(errs).length > 0) return setEditErrors(errs);
+
+        setEditSubmitting(true);
+        try {
+            await updateCustomer(editingCustomer.CustomerID, editForm);
+            showToast('Customer updated successfully');
+            setEditingCustomer(null);
+            fetchData();
+        } catch (e) {
+            alert("Error updating customer: " + (e.message || "Unknown error"));
+        } finally {
+            setEditSubmitting(false);
+        }
+    };
+
     // Pull-to-refresh
     const [touchStartY, setTouchStartY] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -168,8 +216,11 @@ export default function CustomersPage() {
                                         <td className="px-6 py-4">{c.CompanyName}</td>
                                         <td className="px-6 py-4">{c.City}</td>
                                         <td className="px-6 py-4 text-right">
-                                            <button onClick={() => navigate(`/customers/${c.CustomerID}`)} className="text-primary font-bold hover:underline mr-4">View</button>
-                                            <button onClick={() => handleDeleteCustomer(c.CustomerID)} className="text-red-600 hover:bg-red-50 p-2 rounded transition-colors" title="Delete"><Trash2 size={18} /></button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button onClick={() => navigate(`/customers/${c.CustomerID}`)} className="text-primary font-bold hover:underline px-3 py-1.5 rounded bg-blue-50 border border-blue-100 text-sm">View</button>
+                                                <button onClick={() => openEditCustomer(c)} className="p-2 text-gray-400 hover:text-primary hover:bg-blue-50 rounded transition-colors" title="Edit"><Pencil size={16} /></button>
+                                                <button onClick={() => handleDeleteCustomer(c.CustomerID)} className="text-red-600 hover:bg-red-50 p-2 rounded transition-colors" title="Delete"><Trash2 size={16} /></button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -237,6 +288,57 @@ export default function CustomersPage() {
                         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-2">
                             <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded text-sm font-bold">Cancel</button>
                             <button type="submit" className="px-6 py-2 bg-primary text-white rounded text-sm font-bold hover:bg-blue-700 shadow-sm flex items-center gap-2" disabled={submitting}><CheckCircle2 size={16} /> Save</button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* Edit Customer Modal */}
+            {editingCustomer && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 animate-in fade-in">
+                    <form onSubmit={handleUpdateCustomer} className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2"><Pencil size={18} className="text-primary" /> Edit Customer</h2>
+                            <button type="button" onClick={() => setEditingCustomer(null)} className="text-gray-400 hover:text-gray-700"><X size={20} /></button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            {duplicatePhoneWarning && (
+                                <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                                    <AlertCircle size={15} className="shrink-0" /> {duplicatePhoneWarning}
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Customer Name *</label>
+                                <input type="text" value={editForm.CustomerName} onChange={e => setEditForm({ ...editForm, CustomerName: e.target.value })} className={`w-full px-3 py-2 border rounded focus:ring-primary focus:border-primary ${editErrors.CustomerName ? 'border-red-500' : 'border-gray-300'}`} />
+                                {editErrors.CustomerName && <p className="text-xs text-red-500 mt-1">{editErrors.CustomerName}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Phone *</label>
+                                <input type="text" value={editForm.Phone} onChange={e => setEditForm({ ...editForm, Phone: e.target.value })} onBlur={e => checkEditPhoneDuplicate(e.target.value, editingCustomer.CustomerID)} className={`w-full px-3 py-2 border rounded focus:ring-primary focus:border-primary ${editErrors.Phone ? 'border-red-500' : 'border-gray-300'}`} />
+                                {editErrors.Phone && <p className="text-xs text-red-500 mt-1">{editErrors.Phone}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                                <input type="email" value={editForm.Email} onChange={e => setEditForm({ ...editForm, Email: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Company Name</label>
+                                <input type="text" value={editForm.CompanyName} onChange={e => setEditForm({ ...editForm, CompanyName: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">City</label>
+                                <input type="text" value={editForm.City} onChange={e => setEditForm({ ...editForm, City: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">GST Number</label>
+                                <input type="text" value={editForm.GSTNumber} onChange={e => setEditForm({ ...editForm, GSTNumber: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary uppercase" maxLength={15} />
+                            </div>
+                        </div>
+                        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-2">
+                            <button type="button" onClick={() => setEditingCustomer(null)} className="px-4 py-2 border border-gray-300 rounded text-sm font-bold">Cancel</button>
+                            <button type="submit" disabled={editSubmitting} className="px-6 py-2 bg-primary text-white rounded text-sm font-bold hover:bg-blue-700 shadow-sm flex items-center gap-2 disabled:opacity-50">
+                                <CheckCircle2 size={16} /> {editSubmitting ? 'Saving...' : 'Save Changes'}
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -246,9 +246,9 @@ export default function PaymentsPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wide
-                        ${status === 'Pending' ? 'bg-brand-50 text-blue-700 border-brand-200' :
-                                                    status === 'Partial' ? 'bg-brand-100 text-brand-800 border-brand-300' :
-                                                        'bg-primary text-white border-primary'}`}>
+                        ${status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                                    status === 'Partial' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                                                        'bg-green-100 text-green-700 border-green-200'}`}>
                                                 {status}
                                             </span>
                                         </td>

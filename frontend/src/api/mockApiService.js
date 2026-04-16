@@ -300,6 +300,12 @@ export default async function handleMockAction(action, payload) {
             return { success: true };
         }
 
+        case 'updateOrder': {
+            const ordIdx = MOCK_DB.orders.findIndex(o => o.OrderID === payload.OrderID);
+            if (ordIdx > -1) Object.assign(MOCK_DB.orders[ordIdx], payload.updates);
+            return { success: true };
+        }
+
         case 'createQuotation': {
             const thresholdPrice = parseFloat(
                 (MOCK_DB.settings.find(s => s.SettingKey === 'PriceApprovalThreshold') || {}).SettingValue || '3650'

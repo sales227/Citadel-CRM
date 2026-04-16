@@ -98,6 +98,7 @@ export const deleteQuotations = (quotationIDs, logUserID) => apiCall('deleteQuot
 export const getOrders = (filters = {}) => apiCall('getOrders', filters);
 export const createOrder = (data) => apiCall('createOrder', data);
 export const updateOrderStatus = (id, status) => apiCall('updateOrderStatus', { OrderID: id, Status: status });
+export const updateOrder = (id, data) => apiCall('updateOrder', { OrderID: id, updates: data });
 
 // Delete Orders (cascade)
 export const deleteOrders = (orderIDs, logUserID) => apiCall('deleteOrders', { OrderIDs: orderIDs, logUserID });

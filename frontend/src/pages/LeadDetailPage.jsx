@@ -116,12 +116,12 @@ export default function LeadDetailPage() {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'New':         return 'bg-gray-100 text-gray-700 border-gray-200';
-            case 'Contacted':   return 'bg-brand-100 text-brand-800 border-brand-200';
-            case 'Quoted':      return 'bg-brand-200 text-brand-900 border-brand-300';
-            case 'Negotiating': return 'bg-blue-200 text-blue-900 border-blue-300';
-            case 'Won':         return 'bg-primary text-white border-primary';
-            case 'Lost':        return 'bg-gray-200 text-gray-600 border-gray-300';
+            case 'New':         return 'bg-gray-100    text-gray-600    border-gray-200';
+            case 'Contacted':   return 'bg-sky-100     text-sky-700     border-sky-200';
+            case 'Quoted':      return 'bg-violet-100  text-violet-700  border-violet-200';
+            case 'Negotiating': return 'bg-amber-100   text-amber-700   border-amber-200';
+            case 'Won':         return 'bg-green-100   text-green-700   border-green-200';
+            case 'Lost':        return 'bg-red-100     text-red-600     border-red-200';
             default:            return 'bg-gray-100 text-gray-700 border-gray-200';
         }
     };
