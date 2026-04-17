@@ -121,9 +121,26 @@ function createInitialMockDB() {
     };
 }
 
-// Use globalThis to persist mock DB across Vite HMR reloads
+// Persist mock DB in localStorage so data survives page refreshes
+const STORAGE_KEY = 'citadel_mock_db_v1';
+
+function loadMockDB() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+    } catch (e) { /* ignore parse errors */ }
+    return null;
+}
+
+function saveMockDB() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_DB));
+    } catch (e) { /* ignore quota errors */ }
+}
+
+// Use globalThis for Vite HMR within a session, localStorage across refreshes
 if (!globalThis.__CITADEL_MOCK_DB__) {
-    globalThis.__CITADEL_MOCK_DB__ = createInitialMockDB();
+    globalThis.__CITADEL_MOCK_DB__ = loadMockDB() || createInitialMockDB();
 }
 let MOCK_DB = globalThis.__CITADEL_MOCK_DB__;
 
@@ -139,7 +156,15 @@ const MOCK_PASSWORDS = {
     'user3@citadel.com': 'User@1234'
 };
 
+const READ_ACTIONS = new Set(['login', 'getDashboardStats', 'getSettings', 'getUsers', 'getCustomers', 'getCustomerById', 'getLeads', 'getLeadById', 'getInteractions', 'getQuotations', 'getOrders', 'getPayments', 'getReminders']);
+
 export default async function handleMockAction(action, payload) {
+    const result = await _handleMockAction(action, payload);
+    if (!READ_ACTIONS.has(action)) saveMockDB();
+    return result;
+}
+
+async function _handleMockAction(action, payload) {
     console.warn(`[Mock API] Intercepting ${action}`, payload);
     await delay(600);
 
